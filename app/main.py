@@ -123,7 +123,7 @@ class MainWindow(QtGui.QMainWindow):
     def callWindow(self):
         print "callWindow method call"
         self.aboutWindowStart=AboutWindow()
-        self.aboutWindowStart.show()
+        #self.aboutWindowStart.show()
 
 class AboutWindow(QtGui.QWidget):
     def __init__(self):
@@ -131,13 +131,78 @@ class AboutWindow(QtGui.QWidget):
         self.initUI()
 
     def initUI(self):
-        app = QtGui.QMainWindow()
 
-        w = QtGui.QWidget()
-        w.resize(250, 150)
-        w.move(300, 300)
-        w.setWindowTitle('Simple')
-        w.show()
+
+        self.mainWidget = QtGui.QWidget(parent=None)
+#TOP WIDGET-------------------------------------------------
+        #self.topWidget=QtGui.QFrame(self.mainWidget)
+        #self.topWidget.setFrameStyle(QtGui.QFrame.StyledPanel)
+        #self.topWidget.setSizePolicy(QtGui.QSizePolicy("Expanding"))
+
+        self.nameLabel = QtGui.QLabel('marinade', self.mainWidget)
+        self.nameLabel.setText("Marinade")
+        self.nameLabel.setFont(QtGui.QFont('SansSerif', 14))
+        self.nameLabel.setAlignment(QtCore.Qt.AlignLeft)
+
+        self.versionLabel = QtGui.QLabel(self.mainWidget)
+        self.versionLabel.setText("Version 0.1")
+
+        #self.qbtn = QtGui.QPushButton('Quit', self.mainWidget)
+        self.pictureLabel = QtGui.QLabel(self.mainWidget)
+        self.pictureLabel.setPixmap(QtGui.QPixmap("image/marisa_small.gif"))
+
+        self.grid=QtGui.QGridLayout()
+
+
+        self.grid.setSpacing(10)
+        self.grid.addWidget(self.nameLabel, 0, 1, 0, 2 )
+        self.grid.addWidget(self.versionLabel, 1, 1, 1, 2)
+        self.grid.addWidget(self.pictureLabel, 0, 0, 0, 1)
+
+
+
+
+#BOTTOM WIDGET-------------------------
+        #self.bottomWidget = QtGui.QWidget()
+        #self.text=QtGui.QPushButton("shit", self.mainWidget)
+
+
+
+
+
+        self.group = QtGui.QGroupBox(self.mainWidget)
+        self.group.setTitle("MIT Public License")
+        self.license = QtGui.QTextEdit("License", self.group)
+        #self.vboxwidget = QtGui.QWidget(self.group)
+        #self.vbox = QtGui.QVBoxLayout(self.vboxwidget)
+        #self.license=QtGui.QTextEdit(self.vboxwidget)
+        #
+        self.text=open('LICENSE').read()
+        self.license.setPlainText(self.text)
+        self.license.setReadOnly(True)
+
+        self.vbox2=QtGui.QVBoxLayout()
+        self.vbox2.addWidget(self.license)
+        self.group.setLayout(self.vbox2)
+
+
+        #self.vbox.addWidget(self.license)
+        #self.vbox.addStretch(20)
+        #self.vbox.setMargin(1)
+        #self.group.setLayout(self.vbox)
+
+        self.vbox=QtGui.QVBoxLayout()
+        self.vbox.addLayout(self.grid)
+        #self.vbox.addWidget(self.text)
+        self.vbox.addWidget(self.group)
+        self.vbox.addLayout(self.vbox2)
+        #self.vbox.addStretch(1)
+        self.mainWidget.setLayout(self.vbox)
+
+
+        self.mainWidget.resize(400, 400)
+        self.mainWidget.setWindowTitle('About')
+        self.mainWidget.show()
 
 
 
