@@ -11,9 +11,7 @@ class PrefWindow(QtGui.QWidget):
     def __init__(self):
         super(PrefWindow, self).__init__()
         self.initUI()
-        self.ex=Config()
-        self.ex.read()
-        self.pomodoro=self.ex.pomodoro
+
         #self.rest=self.ex.rest()
         #self.lrest=self.ex.lrest()
 
@@ -25,14 +23,19 @@ class PrefWindow(QtGui.QWidget):
         self.tab1=QtGui.QWidget()
 
 #--------Tab 1-----------------------------------------------------------------
-
+ #-------смотреть здесь------------
+        self.ex=Config()
+        self.ex.read()
+        self.pomodoro=self.ex.pomodoro
 
         self.label1=QtGui.QLabel("Pomodoro Time", self.tab1)
         self.slider1=QtGui.QSlider(QtCore.Qt.Horizontal, self.tab1)
+        self.slider1.setValue(self.pomodoro)
         self.sbox1=QtGui.QSpinBox(self.tab1)
+        self.sbox1.setValue(self.pomodoro)
         self.slider1.valueChanged.connect(self.sbox1.setValue)
         self.sbox1.valueChanged.connect(self.slider1.setValue)
-
+#-------/смотреть здесь------------
         self.hbox1=QtGui.QHBoxLayout()
         self.hbox1.addWidget(self.label1)
         self.hbox1.addWidget(self.slider1)
@@ -100,10 +103,11 @@ class PrefWindow(QtGui.QWidget):
         self.mainWidget.setWindowTitle('Preferences')
         self.mainWidget.setWindowIcon(QtGui.QIcon('image/marisa_small.gif'))
         self.mainWidget.show()
-
+#-------эта штука для проверки значений------------
     def printValues(self):
         self.pomodoro = self.slider1.value()
         print self.pomodoro
+#-----здесь будет ex.write()
 
 
 """
