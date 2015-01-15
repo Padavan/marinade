@@ -3,6 +3,8 @@
 
 import sys
 from PyQt4 import QtGui, QtCore
+from PyQt4.QtCore import pyqtSlot,SIGNAL,SLOT
+import time
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
@@ -21,10 +23,23 @@ class MainWindow(QtGui.QMainWindow):
         self.btn.setToolTip('This is a <b>QPushButton</b> widget')
         self.btn.resize(self.btn.sizeHint())
 
-        self.timeText = QtGui.QLabel(self.centralwidget)
+        self.now=0
+        #self.timeText = QtGui.QLabel(self.centralwidget)
         #self.timeText.setText("00:00")
+
+        self.timer=QtCore.QTimer()
+        self.value=60
         self.lcdNumber = QtGui.QLCDNumber(self.centralwidget)
-        self.lcdNumber.display("00:00")
+        self.lcdNumber.display(60)
+        self.lcdNumber.connect(self.timer,SIGNAL("timeout()"),self.lcdNumber,SLOT("count()"))
+
+
+        self.timer.start(100)
+
+        #"%02d:%02d" % divmod(self.now, 60)
+
+
+
 
         self.vbox=QtGui.QVBoxLayout(self.centralwidget)
         self.vbox.addWidget(self.lcdNumber)
@@ -124,6 +139,9 @@ class MainWindow(QtGui.QMainWindow):
         print "callWindow method call"
         self.aboutWindowStart=AboutWindow()
         #self.aboutWindowStart.show()
+    def count(self):
+        self.display(self.value)
+        self.value = self.value-1
 
 class AboutWindow(QtGui.QWidget):
     def __init__(self):
@@ -134,26 +152,20 @@ class AboutWindow(QtGui.QWidget):
 
 
         self.mainWidget = QtGui.QWidget(parent=None)
-#TOP WIDGET-------------------------------------------------
-        #self.topWidget=QtGui.QFrame(self.mainWidget)
-        #self.topWidget.setFrameStyle(QtGui.QFrame.StyledPanel)
-        #self.topWidget.setSizePolicy(QtGui.QSizePolicy("Expanding"))
+
 
         self.nameLabel = QtGui.QLabel('marinade', self.mainWidget)
         self.nameLabel.setText("Marinade")
         self.nameLabel.setFont(QtGui.QFont('SansSerif', 14))
-        self.nameLabel.setAlignment(QtCore.Qt.AlignLeft)
+        #self.nameLabel.setAlignment(QtCore.Qt.AlignLeft)
 
         self.versionLabel = QtGui.QLabel(self.mainWidget)
         self.versionLabel.setText("Version 0.1")
 
-        #self.qbtn = QtGui.QPushButton('Quit', self.mainWidget)
         self.pictureLabel = QtGui.QLabel(self.mainWidget)
         self.pictureLabel.setPixmap(QtGui.QPixmap("image/marisa_small.gif"))
 
         self.grid=QtGui.QGridLayout()
-
-
         self.grid.setSpacing(10)
         self.grid.addWidget(self.nameLabel, 0, 1, 0, 2 )
         self.grid.addWidget(self.versionLabel, 1, 1, 1, 2)
@@ -162,48 +174,49 @@ class AboutWindow(QtGui.QWidget):
 
 
 
-#BOTTOM WIDGET-------------------------
-        #self.bottomWidget = QtGui.QWidget()
-        #self.text=QtGui.QPushButton("shit", self.mainWidget)
-
-
-
 
 
         self.group = QtGui.QGroupBox(self.mainWidget)
         self.group.setTitle("MIT Public License")
-        self.license = QtGui.QTextEdit("License", self.group)
-        #self.vboxwidget = QtGui.QWidget(self.group)
-        #self.vbox = QtGui.QVBoxLayout(self.vboxwidget)
-        #self.license=QtGui.QTextEdit(self.vboxwidget)
-        #
+        self.license = QtGui.QTextEdit(self.group)
+
         self.text=open('LICENSE').read()
         self.license.setPlainText(self.text)
         self.license.setReadOnly(True)
+
+
+
+
+        self.okbutton = QtGui.QPushButton("OK", self.mainWidget)
+        self.okbutton.clicked.connect(self.mainWidget.close)
+        self.hbox2=QtGui.QHBoxLayout()
+        self.hbox2.addStretch(1)
+        self.hbox2.addWidget(self.okbutton)
+
 
         self.vbox2=QtGui.QVBoxLayout()
         self.vbox2.addWidget(self.license)
         self.group.setLayout(self.vbox2)
 
 
-        #self.vbox.addWidget(self.license)
-        #self.vbox.addStretch(20)
-        #self.vbox.setMargin(1)
-        #self.group.setLayout(self.vbox)
+
 
         self.vbox=QtGui.QVBoxLayout()
         self.vbox.addLayout(self.grid)
-        #self.vbox.addWidget(self.text)
         self.vbox.addWidget(self.group)
-        self.vbox.addLayout(self.vbox2)
-        #self.vbox.addStretch(1)
+        self.vbox.addLayout(self.hbox2)
+
         self.mainWidget.setLayout(self.vbox)
 
 
         self.mainWidget.resize(400, 400)
         self.mainWidget.setWindowTitle('About')
+        self.mainWidget.setWindowIcon(QtGui.QIcon('image/marisa_small.gif'))
         self.mainWidget.show()
 
+    #def okClicked(self):
+        #print "ok clicked"
+        #self.mainWidget.close()
 
 
 
