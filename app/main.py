@@ -4,7 +4,11 @@
 import sys
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import pyqtSlot,SIGNAL,SLOT
+<<<<<<< HEAD
 import time
+=======
+import time,threading
+>>>>>>> f85633c86d99f9bef1ec0634728cbf7cdbfc08f9
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
@@ -18,16 +22,25 @@ class MainWindow(QtGui.QMainWindow):
 
         #self.resize(400,400)
         self.centralwidget = QtGui.QWidget(self)
+#----------------------------------------------------------
 
-        self.btn=QtGui.QPushButton('Button', self.centralwidget)
+        self.tmr=Timer()
+
+        self.btn=QtGui.QPushButton('Start', self.centralwidget)
         self.btn.setToolTip('This is a <b>QPushButton</b> widget')
         self.btn.resize(self.btn.sizeHint())
+        self.btn.clicked.connect(self.toggle)
 
+
+<<<<<<< HEAD
         self.now=0
+=======
+>>>>>>> f85633c86d99f9bef1ec0634728cbf7cdbfc08f9
         #self.timeText = QtGui.QLabel(self.centralwidget)
         #self.timeText.setText("00:00")
 
         self.timer=QtCore.QTimer()
+<<<<<<< HEAD
         self.value=60
         self.lcdNumber = QtGui.QLCDNumber(self.centralwidget)
         self.lcdNumber.display(60)
@@ -40,10 +53,34 @@ class MainWindow(QtGui.QMainWindow):
 
 
 
+=======
+        self.timer.timeout.connect(self.countdown)
+        #self.timer.start(1000)
+        self.e=threading.Thread(target=self.timer.start(1000))
+        self.e.start()
+        #self.thread = QtCore.QThread()
+        #self.thread.timer.start(100)
+
+        #self.value=60
+        self.now=self.tmr.dumb()
+        #self.timer2=threading.Thread(target=self.tmr.start)
+
+        self.lcdNumber = QtGui.QLCDNumber(self.centralwidget)
+        self.lcdNumber.display(self.now)
+        #self.lcdNumber.connect(self.timer, SIGNAL(timeout()), self, SLOT(update()))
+
+        #self.lcdNumber.connect(self.timer,SIGNAL("timeout()"),self.lcdNumber,SLOT("count()"))
+#----------------------------------------------------------
+        #"%02d:%02d" % divmod(self.now, 60)
+        self.hbox=QtGui.QHBoxLayout()
+        self.hbox.addStretch(1)
+        self.hbox.addWidget(self.btn)
+        self.hbox.addStretch(1)
+>>>>>>> f85633c86d99f9bef1ec0634728cbf7cdbfc08f9
 
         self.vbox=QtGui.QVBoxLayout(self.centralwidget)
         self.vbox.addWidget(self.lcdNumber)
-        self.vbox.addWidget(self.btn)
+        self.vbox.addLayout(self.hbox)
         self.setCentralWidget(self.centralwidget)
 
 
@@ -91,7 +128,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.optAction = QtGui.QAction("Preference", self)
         self.menu.addAction(self.optAction)
-
+        self.optAction.triggered.connect(self.callPreferences)
 
         #self.aboutWindowStart=AboutWindow()
         self.aboutAction = QtGui.QAction("About", self)
@@ -142,6 +179,30 @@ class MainWindow(QtGui.QMainWindow):
     def count(self):
         self.display(self.value)
         self.value = self.value-1
+
+    def callPreferences(self):
+        print "call preference method"
+        self.prefWindowStart=PrefWindow()
+
+    def countdown(self):
+        self.now=self.tmr.dumb()
+        print "countdoun %d" % self.now
+        #self.now2="%02d:%02d" % divmod(self.now, 60)
+        self.lcdNumber.display("%02d:%02d" % divmod(self.now, 60))
+
+    def toggle(self):
+        sender=self.sender()
+        if self.btn.text()=="Start":
+            self.statusBar().showMessage(sender.text() + ' was pressed')
+            self.btn.setText("Stop")
+            #self.tmr.start()
+
+            self.w=threading.Thread(target=self.tmr.start)
+            self.w.start()
+        else:
+            self.statusBar().showMessage(sender.text() + ' was pressed')
+            self.btn.setText("Start")
+            self.tmr.stop()
 
 class AboutWindow(QtGui.QWidget):
     def __init__(self):
@@ -217,19 +278,47 @@ class AboutWindow(QtGui.QWidget):
     #def okClicked(self):
         #print "ok clicked"
         #self.mainWidget.close()
+<<<<<<< HEAD
+=======
+
+
+class Timer(object):
+    def __init__(self):
+        object.__init__(self)
+        self.minutes=5
+        self.count=self.minutes*1
+        self.is_state=False
+    def start(self):
+        self.is_state=False
+        while self.count > 0:
+            self.count-=1
+            time.sleep(1)
+            print self.is_state
+            print self.count
+            if self.is_state:
+                break
+    def stop(self):
+        self.minutes=5
+        self.count=5
+        self.is_state=True
+    def dumb(self):
+        return self.count
+
+class PrefWindow(QtGui.QWidget):
+    def __init__(self):
+        super(PrefWindow, self).__init__()
+        self.initUI()
+>>>>>>> f85633c86d99f9bef1ec0634728cbf7cdbfc08f9
+
+    def initUI(self):
+        self.mainWidget = QtGui.QWidget(parent=None)
 
 
 
-
-"""
-    def closeEvent(self, event):
-        reply = QtGui.QMessageBox.question(self, "Message", "Are you sure to quit?", QtGui.QMessageBox.Yes | \
-                                           QtGui.QMessageBox.No, QtGui.QMessageBox.No)
-        if reply == QtGui.QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore()
-"""
+        self.mainWidget.resize(400, 400)
+        self.mainWidget.setWindowTitle('Preferences')
+        self.mainWidget.setWindowIcon(QtGui.QIcon('image/marisa_small.gif'))
+        self.mainWidget.show()
 
 def main():
     app=QtGui.QApplication(sys.argv)
